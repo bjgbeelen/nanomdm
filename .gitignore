@@ -1,2 +1,14 @@
 /nanomdm-*
-/nano2nano-*
+/nano2nano-*# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
+
+ca.pem
+mdm-certificates
+*-darwin-arm64
