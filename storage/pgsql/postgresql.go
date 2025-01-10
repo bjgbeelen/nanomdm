@@ -2,11 +2,13 @@
 package pgsql
 
 import (
+	"crypto/x509"
 	"context"
 	"database/sql"
 	_ "embed"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/micromdm/nanomdm/cryptoutil"
 	"github.com/micromdm/nanomdm/mdm"
@@ -99,12 +101,21 @@ func (s *PgSQLStorage) StoreAuthenticate(r *mdm.Request, msg *mdm.Authenticate) 
 	if r.Certificate != nil {
 		pemCert = cryptoutil.PEMCertificate(r.Certificate.Raw)
 	}
+
+	cert, error := x509.ParseCertificate(r.Certificate.Raw)
+	if error != nil {
+		return error
+	}
+
+	// Get the Organizational Units from the Subject
+	externalId := strings.Join(cert.Subject.OrganizationalUnit, ",")
+
 	_, err := s.db.ExecContext(
 		r.Context, `
 INSERT INTO devices
-    (id, identity_cert, serial_number, authenticate, authenticate_at)
+    (id, identity_cert, serial_number, authenticate, external_id, authenticate_at)
 VALUES
-    ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+    ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
 ON CONFLICT ON CONSTRAINT devices_pkey DO
 UPDATE SET
     identity_cert = EXCLUDED.identity_cert,
@@ -113,7 +124,7 @@ UPDATE SET
     bootstrap_token_at = NULL,
     authenticate = EXCLUDED.authenticate,
     authenticate_at = CURRENT_TIMESTAMP;`,
-		r.ID, nullEmptyString(string(pemCert)), nullEmptyString(msg.SerialNumber), msg.Raw,
+		r.ID, nullEmptyString(string(pemCert)), nullEmptyString(msg.SerialNumber), msg.Raw, externalId,
 	)
 	return err
 }

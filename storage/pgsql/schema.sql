@@ -25,10 +25,13 @@ CREATE TABLE devices
     bootstrap_token_b64 TEXT         NULL,
     bootstrap_token_at  TIMESTAMP    NULL,
 
+    external_id         CHAR(24)       NOT NULL,
+
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- trigger
 
     PRIMARY KEY (id),
+    UNIQUE (external_id),
 
     CHECK (identity_cert IS NULL OR SUBSTRING(identity_cert FROM 1 FOR 27) = '-----BEGIN CERTIFICATE-----'),
     CHECK (serial_number IS NULL OR serial_number != ''),
@@ -38,6 +41,7 @@ CREATE TABLE devices
     CHECK (bootstrap_token_b64 IS NULL OR bootstrap_token_b64 != '')
 );
 CREATE INDEX serial_number ON devices (serial_number);
+CREATE INDEX external_id ON devices (external_id);
 
 CREATE TABLE users
 (
