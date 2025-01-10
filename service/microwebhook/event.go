@@ -3,9 +3,10 @@ package microwebhook
 import "time"
 
 type Event struct {
-	Topic     string    `json:"topic"`
-	EventID   string    `json:"event_id"`
-	CreatedAt time.Time `json:"created_at"`
+	Topic      string    `json:"topic"`
+	EventID    string    `json:"event_id"`
+	CreatedAt  time.Time `json:"created_at"`
+	ExternalId string    `json:"external_id,omitempty"`
 
 	AcknowledgeEvent *AcknowledgeEvent `json:"acknowledge_event,omitempty"`
 	CheckinEvent     *CheckinEvent     `json:"checkin_event,omitempty"`

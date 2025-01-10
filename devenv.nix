@@ -9,7 +9,7 @@
     NANOMDM_DB_HOST = "localhost";
     NANOMDM_DB_PORT = "5432";
     NANOMDM_DB_DATABASE = "monimentor-mdm";
-    NANOMDM_WEBHOOK_URL = "http://my.localhost.com/v1/webhooks/mdm";
+    NANOMDM_WEBHOOK_URL = "http://my.localhost.com/internal/webhooks/mdm";
   };
 
   scripts = {

@@ -2,7 +2,9 @@
 package microwebhook
 
 import (
+	"crypto/x509"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/micromdm/nanomdm/mdm"
@@ -34,6 +36,14 @@ func (w *MicroWebhook) Authenticate(r *mdm.Request, m *mdm.Authenticate) error {
 			Params:       r.Params,
 		},
 	}
+	cert, error := x509.ParseCertificate(r.Certificate.Raw)
+	if error != nil {
+		return error
+	}
+	// Get the Organizational Units from the Subject
+	externalId := strings.Join(cert.Subject.OrganizationalUnit, ",")
+	ev.ExternalId = externalId
+
 	return postWebhookEvent(r.Context, w.client, w.url, ev)
 }
 
