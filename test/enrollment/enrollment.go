@@ -17,7 +17,7 @@ import (
 	"github.com/micromdm/nanomdm/test"
 	"github.com/micromdm/nanomdm/test/protocol"
 
-	"github.com/groob/plist"
+	"github.com/micromdm/plist"
 )
 
 var ErrAlreadyEnrolled = errors.New("already enrolled")
@@ -260,6 +260,11 @@ func (e *Enrollment) ID() string {
 	// we know we're only dealing with device IDs at this point.
 	// make that assumption of the UDID for the normalized ID.
 	return e.enrollment.UDID
+}
+
+// SerialNumber returns the serial number of the enrollment.
+func (e *Enrollment) SerialNumber() string {
+	return e.serialNumber
 }
 
 // EnrollID returns the NanoMDM enroll ID.
